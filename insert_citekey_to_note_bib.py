@@ -37,35 +37,28 @@ def get_BibTex_file_contents(file_path: str):
     contents.append(''.join(tmp_lines))
     return contents
 
-
-
-
-
-    #             bib_items[citekey] = BibTexItem(citekey, literature_type, tmp_data)
-
-    #             # Get identifier (citekey) and literature type
-    #             parts = line[1:].split('{')
-    #             literature_type = parts[0]
-    #             citekey = parts[1].split(',')[0]
-
-    #             # Initialize an object to collect data
-    #             tmp_data = {}
-
-    #         # Collect literature data
-    #         else:
-    #             parts = line.rstrip(',').split('=')
-    #             field = parts[0].strip()
-    #             try:
-    #                 value = parts[1].strip().strip('"')
-    #             except IndexError:
-    #                 raise IndexError(line)
-
-    #             assert field not in tmp_data
-    #             tmp_data[field] = value
+def convert_str_to_BibTexItem(item: str):
+    assert item.startswith('@')
+    literature_type = item[1:].split('{')[0]
     
-    # assert citekey not in bib_items
-    # bib_items[citekey] = BibTexItem(citekey, literature_type, tmp_data)
+    data = item[1:].split(literature_type)[1]
+    assert data.startswith('{')
+    assert data.endswith('}')
 
-    # return bib_items
+    citekey = data[1:-1].split(',')[0]
 
+    meta_data = data[1:-1].lstrip(citekey).lstrip(',').split('=')
 
+    data = {}
+    for i, chunk_info in enumerate(meta_data): 
+        if i == 0: 
+            field = chunk_info.strip()
+        elif i == len(meta_data)-1: 
+            data[field] = chunk_info.rstrip()
+        else: 
+            parts = chunk_info.strip().split(',') 
+            prev_field_value = ','.join(parts[:-1]) 
+            data[field] = prev_field_value 
+            field = parts[-1]
+
+    return BibTexItem(citekey, literature_type, data)
