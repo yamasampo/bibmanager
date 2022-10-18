@@ -1,5 +1,8 @@
 
-from typing import Dict, List
+import os
+import argparse
+from typing import List
+from warnings import warn
 
 from collections import namedtuple
 
@@ -7,6 +10,66 @@ BibTexItem = namedtuple(
     'BibTexItem', 
     ['citekey', 'literature_type', 'data']
 )
+
+def main(
+        input_file_path: str, 
+        output_file_path: str = '', inplace: bool = False, 
+        prefix: str = '', suffix: str = '\n'
+        ):
+    if inplace:
+        if output_file_path != '':
+            warn('Given path to output file will be ignored since inplace is True.')
+
+        output_file_path = input_file_path
+    else:
+        if output_file_path == '':
+            raise ValueError('Please give output_file_path or set inplace True.')
+        
+        if os.path.isfile(output_file_path):
+            raise FileExistsError(f'File exists (although inplace=False): {output_file_path}')
+    
+    # Read the input file content
+    bibtex_items: list = read_BibTex_file(input_file_path)
+    
+    # Insert citekey
+    new_bibtex_items = insert_citekey_to_note(bibtex_items, prefix, suffix)
+
+    # Output as file
+    save_as_BibTex_file(new_bibtex_items, output_file_path)
+
+# ================ Primary functions ================ #
+
+def read_BibTex_file(file_path: str) -> List[BibTexItem]:
+    contents = get_BibTex_file_contents(file_path)
+    items: List[BibTexItem] = []
+
+    for item in contents:
+        bibtex_item = convert_str_to_BibTexItem(item)
+        items.append(bibtex_item)
+
+    return items
+
+def insert_citekey_to_note(bibtex_items, prefix='', suffix='\n'):
+    new_bibtex_items = []
+
+    for item in bibtex_items:
+        out_item = insert_citekey(item, prefix, suffix)
+        new_bibtex_items.append(out_item)
+
+    return new_bibtex_items
+
+def save_as_BibTex_file(bibtex_items: List[BibTexItem], output_file_path: str):
+
+    out_lines = []
+
+    for item in bibtex_items:
+        out_lines.append(format_BibTexItem_to_str(item))
+
+    with open(output_file_path, 'w') as f:
+        print(f'% itemnum: {len(out_lines)}', file=f)
+        print('\n'.join(out_lines), file=f)
+
+# ================ Secondary functions ================ #
 
 def get_BibTex_file_contents(file_path: str):
     contents: List[str] = []
@@ -62,3 +125,75 @@ def convert_str_to_BibTexItem(item: str):
             field = parts[-1]
 
     return BibTexItem(citekey, literature_type, data)
+
+def insert_citekey(item, prefix='', suffix='\n'):
+    insert_field = 'note'
+
+    if insert_field not in item.data:
+        item.data[insert_field] = '"' + prefix + item.citekey + suffix + '"'
+
+        return item
+
+    existing_note = item.data[insert_field].strip('"')
+    new_note = '"' + existing_note + f'\n{prefix}{item.citekey}{suffix}' + '"'
+    
+    item.data[insert_field] = new_note
+
+    return item
+
+def format_BibTexItem_to_str(item):
+    """
+
+    Format
+    ------
+
+    @literature_type{citekey
+    data
+    }
+    """
+
+    data_str = '\n'.join([
+        field + ' = ' + value + ','
+        for field, value in item.data.items()
+    ])
+
+    return f'@{item.literature_type}' + '{' + item.citekey \
+        + f',\n{data_str}' + '\n}'
+
+if __name__ == '__main__':
+    desc = 'Insert citekey into "note" field.'
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument(
+        "-i", "--input_file_path", 
+        help="A path to an input BibTex file.", 
+        type=str
+    )
+    parser.add_argument(
+        "-o", "--output_file_path", 
+        help="A path to an output file.", 
+        type=str, nargs='?', default=''
+    )
+    parser.add_argument(
+        "-l", "--inplace", 
+        help="Whether or not output content will be overwritten in the input file.", 
+        type=bool, nargs='?', default=False
+    )
+    parser.add_argument(
+        "-p", "--prefix", 
+        help="Prefix string in the inserted string in the note field.", 
+        type=str, nargs='?', default=''
+    )
+    parser.add_argument(
+        "-s", "--suffix", 
+        help="Suffix string in the inserted string in the note field.",
+        type=str, nargs='?', default='\n'
+    )
+    args = parser.parse_args()
+    main(
+        args.input_file_path, 
+        args.output_file_path,
+        args.inplace, 
+        args.prefix,
+        args.suffix
+    )
+
