@@ -12,22 +12,27 @@ BibTexItem = namedtuple(
 )
 
 def main(
-        input_file_path: str, 
-        output_file_path: str = '', inplace: bool = False, 
-        prefix: str = '', suffix: str = '\n'
+        input_file_path:    str, 
+        output_file_path:   str, 
+        prefix:             str = '', 
+        suffix:             str = '\n'
         ):
-    if inplace:
-        if output_file_path != '':
-            warn('Given path to output file will be ignored since inplace is True.')
+    """Creates a BibTex file that include  in 'note' field. This will be useful 
+    when citekey may be created by external programs but you want to key citekeys 
+    (transferring BibTex data to another library). 
 
-        output_file_path = input_file_path
-    else:
-        if output_file_path == '':
-            raise ValueError('Please give output_file_path or set inplace True.')
-        
-        if os.path.isfile(output_file_path):
-            raise FileExistsError(f'File exists (although inplace=False): {output_file_path}')
+    Parameters
+    ----------
+    input_file_path: str
+
+    """
+    # Check if 
+    if output_file_path == '':
+        raise ValueError('Please give output_file_path.')
     
+    if os.path.isfile(output_file_path):
+        raise FileExistsError(f'File exists (although inplace=False): {output_file_path}')
+
     # Read the input file content
     bibtex_items: list = read_BibTex_file(input_file_path)
     
