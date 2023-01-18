@@ -1,41 +1,29 @@
 # bibmanager
 
-Can insert citekey to "note" field. 
+parses a BibTex file (obtain entry type, citekey and 
+other data), creates "note" field if it does not exist, and adds citekey 
+to the "note" field. 
 
 Currently, this script accepts only a BibTex file format ([BibTex official], 
-[Wikipedia], [PaperPile article]), but other formats, such as CSV and JASON formats, 
-may be supported in the future. 
+[Wikipedia], [PaperPile article]), but other formats, such as CSV and JASON 
+formats, may be supported in the future. 
 
 ## Table of Contents
 
-1. [How to use](#how-to-use)
-2. [About BibTex file format](#about-bibtex-file-format)
-3. [Future Implementation](#future-implementation)
+1. [Input Arguments](#input-arguments)
+2. [About BibTex File Format](#about-bibtex-file-format)
+3. [How To Use](#how-to-use)
+4. [Future Implementation](#future-implementation)
 
-## How to use
+## Input Arguments
 
-```
-usage: insert_citekey_to_note_bib.py [-h] [-i INPUT_FILE_PATH] [-o OUTPUT_FILE_PATH] [-p [PREFIX]] [-s [SUFFIX]] [-c [CONTROL_FILE_PATH]]
+- input file path (required)
+- ouptut file path (required)
+- prefix (optional)
+- suffix (optional)
 
-Insert citekey into "note" field.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -i INPUT_FILE_PATH, --input_file_path INPUT_FILE_PATH
-                        A path to an input BibTex file.
-  -o OUTPUT_FILE_PATH, --output_file_path OUTPUT_FILE_PATH
-                        A path to an output file.
-  -p [PREFIX], --prefix [PREFIX]
-                        Prefix string in the inserted string in the note field.
-  -s [SUFFIX], --suffix [SUFFIX]
-                        Suffix string in the inserted string in the note field.
-  -c [CONTROL_FILE_PATH], --control_file_path [CONTROL_FILE_PATH]
-                        A path to an control file, where parameters are listed in the file. Note that other command-line arguments will be ignored if a control file
-                        is given.
-```
-
-Calling `insert_citekey_to_note_bib.py -h` or `python3 insert_citekey_to_note_bib.py -h` 
-will show this usage on Terminal. 
+A user can pass these arguments via a control file, which should be ]
+formatted like `sample.ctl`. 
 
 ## About BibTex file format
 
@@ -62,8 +50,8 @@ doi = "10.1186/s13072-022-00454-7"
 }
 ```
 
-This format includes three types of information: entry type, entry ID 
-(so called citekey), and other data about the entry. 
+This format mainly includes three types of information: entry type, entry ID 
+(so called citekey), and other properties of the entry. 
 
 - Entry type can be found as a string between @ and the open parenthesis 
 (ARTICLE in this example). An entry type is not a case sensitive property. 
@@ -73,16 +61,15 @@ Currently, BibTex has a total of 14 entry types, a [PaperPile article] says.
 comma (Talbert2022-wc in this example). The citekey should be assigned 
 uniquely to entries in a BibTex file. This script checks this. 
 
-- Other data follows after citekey and is formatted as a list of field and 
-value pairs. Field and value are separated by = sign, and there are standard 
-field types (ref. 3). 
+- Other properties follows citekey and are listed as pairs of field and 
+value. Field and value are separated by = sign. 
 
-There are many other specifics in BibTex format but please refer to others' 
-explanations. I found [articles by PaperPile] very informative. 
+There are many other specifics in BibTex format and please refer to others' 
+explanations for details. I found [articles by PaperPile] very informative. 
 
-This Python script parses a BibTex file (obtain entry type, citekey and other 
-data), creates "note" field if it does not exist, and adds citekey to the "note" 
-field. In the output file, the sample entry above is shown like this,
+Below shows what you will find in an output file if you input the BibTex 
+sample above. Since the input does not have `note` field, it is created, and
+citekey "Talbert2022-wc" is added to the `note` field with prefix "221017_PaperPile_citekey: ". 
 
 ```
 @ARTICLE{Talbert2022-wc,
@@ -104,6 +91,31 @@ doi =  "10.1186/s13072-022-00454-7",
 note = "221017_PaperPile_citekey: Talbert2022-wc",
 }
 ```
+
+## How To Use
+
+```
+usage: insert_citekey_to_note_bib.py [-h] [-i INPUT_FILE_PATH] [-o OUTPUT_FILE_PATH] [-p [PREFIX]] [-s [SUFFIX]] [-c [CONTROL_FILE_PATH]]
+
+Insert citekey into "note" field.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT_FILE_PATH, --input_file_path INPUT_FILE_PATH
+                        A path to an input BibTex file.
+  -o OUTPUT_FILE_PATH, --output_file_path OUTPUT_FILE_PATH
+                        A path to an output file.
+  -p [PREFIX], --prefix [PREFIX]
+                        Prefix string in the inserted string in the note field.
+  -s [SUFFIX], --suffix [SUFFIX]
+                        Suffix string in the inserted string in the note field.
+  -c [CONTROL_FILE_PATH], --control_file_path [CONTROL_FILE_PATH]
+                        A path to an control file, where parameters are listed in the file. Note that other command-line arguments will be ignored if a control file
+                        is given.
+```
+
+Calling `insert_citekey_to_note_bib.py -h` or 
+`python3 insert_citekey_to_note_bib.py -h` will show this usage on Terminal. 
 
 ## Future implementation
 
