@@ -6,77 +6,7 @@ which are called citekey, and inserts it into a field tractable across libraries
 Currently, this script accepts only a BibTex file format (ref. 1-3), but other 
 formats, such as CSV and JASON formats, may be supported in the future. 
 
-In the BibTex file format, each entry is defined by @ and a curly bracket. 
-Here is an example, 
-
-    @ARTICLE{Talbert2022-wc,
-    title = "Viral histones: pickpocket's prize or primordial progenitor?",
-    author = "Talbert, Paul B and Armache, Karim-Jean and Henikoff, Steven",
-    abstract = "The common histones H2A, H2B, H3, and H4 are the characteristic components of eukaryotic nucleosomes, which function to wrap DNA and compact the genome as well as to regulate access to DNA for transcription and replication in all eukaryotes. In the past two decades, histones have also been found to be encoded in some DNA viruses, where their functions and properties are largely unknown, though recently histones from two related viruses have been shown to form nucleosome-like structures in vitro. Viral histones can be highly similar to eukaryotic histones in primary sequence, suggesting they have been recently picked up from eukaryotic hosts, or they can be radically divergent in primary sequence and may occur as conjoined histone doublets, triplets, or quadruplets, suggesting ancient origins prior to the divergence of modern eukaryotes. Here, we review what is known of viral histones and discuss their possible origins and functions. We consider how the viral life cycle may affect their properties and histories, and reflect on the possible roles of viruses in the origin of the nucleus of modern eukaryotic cells.",
-    journal = "Epigenetics \& chromatin",
-    volume =  15,
-    number =  1,
-    pages = "21",
-    month =  may,
-    year =  2022,
-    url = "http://dx.doi.org/10.1186/s13072-022-00454-7",
-    file = "All_Papers/T/Talbert-Henikoff-2022-epigenetics_chromatin.pdf",
-    language = "en",
-    issn = "1756-8935",
-    pmid = "35624484",
-    doi = "10.1186/s13072-022-00454-7"
-    }
-
-This format includes three types of information: entry type, entry ID 
-(so called citekey), and other data about the entry. 
-
-    Entry type can be found as a string between @ and the open parenthesis 
-    (ARTICLE in this example). An entry type is not a case sensitive property. 
-    Currently, BibTex has a total of 14 entry types, a PaperPile article says 
-    (ref. 3). 
-
-    Citekey can be found as a string between an open parenthesis and the first
-    comma (Talbert2022-wc in this example). The citekey should be assigned 
-    uniquely to entries in a BibTex file. This script checks this. 
-
-    Other data follows after citekey and is formatted as a list of field and 
-    value pairs. Field and value are separated by = sign, and there are standard 
-    field types (ref. 3). 
-
-There are many other specifics in BibTex format but please refer to others' 
-explanations. I found the PaperPile's website very informative (ref. 4). 
-
-This Python script parses a BibTex file (obtain entry type, citekey and other 
-data), creates "note" field if it does not exist, and adds citekey to the "note" 
-field. In the output file, the sample entry above is shown like this,
-
-    @ARTICLE{Talbert2022-wc,
-    title = "Viral histones: pickpocket's prize or primordial progenitor?",
-    author = "Talbert, Paul B and Armache, Karim-Jean and Henikoff, Steven",
-    abstract = "The common histones H2A, H2B, H3, and H4 are the characteristic components of eukaryotic nucleosomes, which function to wrap DNA and compact the genome as well as to regulate access to DNA for transcription and replication in all eukaryotes. In the past two decades, histones have also been found to be encoded in some DNA viruses, where their functions and properties are largely unknown, though recently histones from two related viruses have been shown to form nucleosome-like structures in vitro. Viral histones can be highly similar to eukaryotic histones in primary sequence, suggesting they have been recently picked up from eukaryotic hosts, or they can be radically divergent in primary sequence and may occur as conjoined histone doublets, triplets, or quadruplets, suggesting ancient origins prior to the divergence of modern eukaryotes. Here, we review what is known of viral histones and discuss their possible origins and functions. We consider how the viral life cycle may affect their properties and histories, and reflect on the possible roles of viruses in the origin of the nucleus of modern eukaryotic cells.",
-    journal = "Epigenetics \& chromatin",
-    volume = 15,
-    number = 1,
-    pages = "21",
-    month = may,
-    year = 2022,
-    url = "http://dx.doi.org/10.1186/s13072-022-00454-7",
-    file = "All_Papers/T/Talbert-Henikoff-2022-epigenetics_chromatin.pdf",
-    language = "en",
-    issn = "1756-8935",
-    pmid = "35624484",
-    doi =  "10.1186/s13072-022-00454-7",
-    note = "221017_PaperPile_citekey: Talbert2022-wc",
-    }
-
-
-References
-----------
-[1] BibTex official HP: http://www.bibtex.org/Format/ 
-[2] Wikipedia about BibTex: https://en.wikipedia.org/wiki/BibTeX
-[3] BibTex format overview by PaperPile: https://www.bibtex.com/g/bibtex-format/ 
-[4] BibTex format details by PaperPile https://www.bibtex.com/format/
-
+Please see details for README.md. 
 """
 
 __version__ = '0.1.1'
