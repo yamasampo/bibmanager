@@ -79,6 +79,10 @@ References
 
 """
 
+__version__ = '0.1.1'
+__author__ = 'Haruka Yamashita'
+__email__ = 'haruka.yamashita.t@gmail.com'
+
 # Imports from Python built-in packages
 import os
 import argparse
@@ -87,10 +91,6 @@ import configparser
 from typing import List, Set, Union
 
 from collections import namedtuple
-
-__version__ = '0.1.1'
-__author__ = 'Haruka Yamashita'
-__email__ = 'haruka.yamashita.t@gmail.com'
 
 # Define an object that represents each reference entry in a BibTex file
 BibTexEntry = namedtuple(
