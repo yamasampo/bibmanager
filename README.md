@@ -135,11 +135,18 @@ You can also pass the arguments through a control file by the following steps:
 
 1. In Terminal, go to the bibmanager directory
 
-2. Call 
+2. In `sample.ctl` file, change the value of output_file_path argument to 
+whatever you like (maybe `output2.bib`). Again, note that an existing file 
+should not be specified as an output file. This script will raise an error. 
+
+3. Call 
 
 ```shell
 ./insert_citekey_to_note_bib.py -c ./sample.ctl
 ```
+
+Please confirm that the output file is created and the content is the same as 
+`sample_output.bib`. 
 
 ## Future implementation
 
