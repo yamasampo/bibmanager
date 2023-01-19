@@ -1,8 +1,8 @@
 # bibmanager
 
-parses a BibTex file (obtain entry type, citekey and other data), 
-creates "note" field if it does not exist, and adds citekey 
-to the "note" field. 
+parses a BibTex file (obtain entry type, citekey and other data) and adds 
+citekey to the "note" field using a Python script, 
+`insert_citekey_to_note_bib.py`. 
 
 BibTex is a reference management software for formatting in-line 
 citations and lists of cited literatures (see [BibTex official], 
@@ -100,15 +100,37 @@ note = "221017_PaperPile_citekey: Talbert2022-wc",
 
 The letters following __-__ are flags corresponding to the arguments. 
 
-- input file path (required) __-i__
-- ouptut file path (required) __-o__
-- prefix (optional) __-p__
-- suffix (optional) __-s__
+#### Required
 
-A user can pass these arguments via a control file with __-c__ flag. 
+- input_file_path: __-i__
+    
+    A path to the input BibTex file
 
-You may not remember the flags and arguments. You can show a usage message by 
-calling `./insert_citekey_to_note_bib.py -h` or 
+- output_file_path: __-o__
+    
+    A path to the output BibTex file. If a file already exists, this script 
+    raises an `FileExistsError`. 
+
+#### Optional
+
+- field: __-f__
+
+    Field to which citekey is going to be inserted. If the specified field 
+    does not exist in the input file, the field will be newly added, 
+    otherwise inserted at the end of line. 
+
+- prefix: __-p__
+
+    A string that will be put just before citekey in note section. 
+
+- suffix: __-s__
+    
+    A string that will be put just after citekey in note section.
+
+A user can also pass these arguments via a control file with __-c__ flag. 
+
+You may not remember the flags and arguments. You can show a usage message 
+by calling `./insert_citekey_to_note_bib.py -h` or 
 `./insert_citekey_to_note_bib.py --help`. 
 
 ### Example 1
@@ -126,9 +148,6 @@ To run the script,
 Please check if `output.bib` is created and the content is 
 identical to `sample_output.bib`. 
 
-Note that if `output.bib` already exists, this script raises an 
-`FileExistsError`. 
-
 ### Example 2
 
 You can also pass the arguments through a control file by the following steps:
@@ -136,8 +155,7 @@ You can also pass the arguments through a control file by the following steps:
 1. In Terminal, go to the bibmanager directory
 
 2. In `sample.ctl` file, change the value of output_file_path argument to 
-whatever you like (maybe `output2.bib`). Again, note that an existing file 
-should not be specified as an output file. This script will raise an error. 
+whatever you like (maybe `output2.bib`). 
 
 3. Call 
 
