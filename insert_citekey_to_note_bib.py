@@ -15,7 +15,8 @@ import os
 import argparse
 import configparser
 
-from typing import List, Set, Union
+from datetime import datetime
+from typing import List, Set, Union, Tuple
 
 from collections import namedtuple
 
@@ -24,6 +25,16 @@ BibTexEntry = namedtuple(
     'BibTexEntry', 
     ['citekey', 'entry_type', 'data']
 )
+# NOTE: The namedtuple above is equivalent to class below. 
+# class BibTexEntry:
+#     def __init__(self, citekey, entry_type, data) -> None:
+#         self.citekey = citekey
+#         self.entry_type = entry_type
+#         self.data = data
+# 
+# It may be better to convert namedtuple to class in the future because, in class, 
+# we can link functions to the specific data structure. This way will be easier 
+# to maintain the code.
 
 def main(
         input_file_path:    str, 
@@ -59,6 +70,9 @@ def main(
     suffix: str (optional: '' by default)
         A string that will be put just after citekey in note section.
     """
+    # Get processing start time
+    start = datetime.now().isoformat()
+
     # Check if an output file is specified
     if output_file_path == '':
         raise ValueError('Please give output_file_path.')
@@ -73,14 +87,26 @@ def main(
         raise ValueError(msg)
 
     # Read the input file content
-    bibtex_entries: List[BibTexEntry] = read_BibTex_file(input_file_path)
+    comments, bibtex_entries = read_BibTex_file(input_file_path)
     
     # Insert citekey in note field. 
     new_bibtex_entries = insert_citekey_to_note(
         bibtex_entries, insert_field, prefix, suffix)
 
+    # Add run info to output comment lines
+    run_info = get_run_info(
+        start, 
+        comment_line_indicator = '%', # Because output file is BibTex file format
+        input_file_path     = input_file_path,
+        output_file_path    = output_file_path, 
+        insert_field        = insert_field,
+        prefix              = prefix, 
+        suffix              = suffix
+    )
+    out_comments = comments + run_info
+
     # Output as file
-    save_as_BibTex_file(new_bibtex_entries, output_file_path)
+    save_as_BibTex_file(output_file_path, new_bibtex_entries, out_comments)
 
 # ================ Primary functions ================ #
 
@@ -95,10 +121,13 @@ def read_BibTex_file(file_path: str) -> List[BibTexEntry]:
 
     Return
     ------
-    List[BibTexEntry]
+    comments: List[str]
+        Comment lines
+    entries: List[BibTexEntry]
+        A list of BibTexEntry objects
     """
     # Get a list of strings, each of them represent one reference entry
-    contents: List[str] = get_BibTex_file_contents(file_path)
+    comments, contents = get_BibTex_file_contents(file_path)
     # Initialize a list to output
     entries: List[BibTexEntry] = []
 
@@ -114,7 +143,7 @@ def read_BibTex_file(file_path: str) -> List[BibTexEntry]:
         'The number of entries and citekey does not match: '\
         f'{len(entries)} != {len(citekey_set)}'
     
-    return entries
+    return comments, entries
 
 def insert_citekey_to_note(
         bibtex_entries: List[BibTexEntry], 
@@ -144,25 +173,72 @@ def insert_citekey_to_note(
 
     return new_bibtex_entries
 
+def get_run_info(
+        start_date: str, 
+        comment_line_indicator: str, 
+        **kwargs) -> List[str]:
+    """Returns a list of strings that describe the processing information. 
+
+    Parameters
+    ----------
+    start_date: str
+        Start date and time of processing
+    comment_line_indicator: str
+        Characters that that indicate lines are meant to be comment lines. This 
+        string will be added at the beginning of lines. 
+        The following characters are commonly used among various computer 
+        languages:
+            #
+            /*
+            %
+    kwargs
+        Input arguments that are passed to the processing. 
+        
+    Return
+    ------
+    List[str]
+    """
+    contents = [
+        '',
+        f'This file is an output of bibmanager.insert_citekey_to_note_bib.py '\
+        f'(version {__version__})', 
+        f'\tRun date: {start_date}.', 
+        '',
+        'The following parameters are used for the processing.' 
+    ] + [
+        f'\t{arg} = {value}' for arg, value in kwargs.items()
+    ]
+    out_lines = [
+        comment_line_indicator + ' ' + content
+        for content in contents
+    ]
+
+    return out_lines
+
 def save_as_BibTex_file(
-        bibtex_entries: List[BibTexEntry], 
-        output_file_path: str) -> None:
+        output_file_path:   str,
+        bibtex_entries:     List[BibTexEntry], 
+        comments:           List[str] = [], 
+        ) -> None:
     """Create a new BibTex file for the given entries. Please note that this 
     function does not raise an error if a file exists at the output_file_path but
     will overwrite the content of the existing file. 
     """
-    out_lines = []
+    comment_line = '\n'.join(comments)
+    out_lines = [comment_line]
+
+    # Add itemnum
+    out_lines.append(f'% \n% itemnum: {len(bibtex_entries)}')
 
     for entry in bibtex_entries:
         out_lines.append(format_BibTexEntry_to_str(entry))
 
     with open(output_file_path, 'w') as f:
-        print(f'% itemnum: {len(out_lines)}', file=f)
         print('\n'.join(out_lines), file=f)
 
 # ================ Secondary functions ================ #
 
-def get_BibTex_file_contents(file_path: str) -> List[str]:
+def get_BibTex_file_contents(file_path: str) -> Tuple[List[str]]:
     """Returns a list of strings. Each string is BibTex format of one reference 
     entry. In the future, it is better to convert each string to BibTexEntry 
     object inside this function. Currently, we are looping through all the 
@@ -175,8 +251,11 @@ def get_BibTex_file_contents(file_path: str) -> List[str]:
 
     Return
     ------
-    List[List[str]]
+    comments: List[str]
+    contents: List[str]
     """
+    # Initialize a list of comment lines
+    comments: List[str] = []
     # Initialize a list that will be output
     contents: List[str] = []
 
@@ -191,6 +270,7 @@ def get_BibTex_file_contents(file_path: str) -> List[str]:
 
             # Skip comment line
             if line.startswith('%'):
+                comments.append(line)
                 continue
 
             # Skip empty line
@@ -220,9 +300,10 @@ def get_BibTex_file_contents(file_path: str) -> List[str]:
     # Add tmp_lines for the last entry to contents
     # NOTE: Here, we can pass the string to a function that converts a string 
     # to BibTexEntry. 
-    contents.append(''.join(tmp_lines))
+    if len(tmp_lines) > 0:
+        contents.append(''.join(tmp_lines))
 
-    return contents
+    return comments, contents
 
 def convert_str_to_BibTexEntry(entry: str) -> BibTexEntry:
     """Returns a given entry (string) in BibTexEntry object. This function will 
