@@ -1,12 +1,21 @@
 # bibmanager
 
-parses a BibTex file (obtain entry type, citekey and 
-other data), creates "note" field if it does not exist, and adds citekey 
+parses a BibTex file (obtain entry type, citekey and other data), 
+creates "note" field if it does not exist, and adds citekey 
 to the "note" field. 
 
-Currently, this script accepts only a BibTex file format ([BibTex official], 
-[Wikipedia], [PaperPile article]), but other formats, such as CSV and JASON 
-formats, may be supported in the future. 
+BibTex is a reference management software for formatting in-line 
+citations and lists of cited literatures (see [BibTex official], 
+[Wikipedia], [PaperPile article]). BibTex uses their own file 
+format for keeping reference information and that is what I call 
+"BibTex file" in this package. The BibTex file format has been 
+commonly used by other reference management softwares (e.g., 
+[Zotero], [PaperPile], [Mendeley] and so on) for 
+importing/exporting reference libraries. 
+
+Currently, this script accepts only the BibTex file format, but 
+other formats, such as CSV and JASON formats, may be supported in 
+the future. 
 
 ## Table of Contents
 
@@ -114,8 +123,33 @@ optional arguments:
                         is given.
 ```
 
-Calling `insert_citekey_to_note_bib.py -h` or 
-`python3 insert_citekey_to_note_bib.py -h` will show this usage on Terminal. 
+### Example 1
+
+1. In Terminal, go to the bibmanager directory
+
+2. Call 
+
+```shell
+./insert_citekey_to_note_bib.py -i ./sample_input.bib -o ./output.bib -p 230119_citekey=
+```
+
+Please check if `output.bib` is created and the content is 
+identical to `sample_output.bib`. 
+
+Note that if `output.bib` already exists, this script raises an 
+`FileExistsError`. 
+
+### Example 2
+
+You can also pass the arguments through a control file by the following steps:
+
+1. In Terminal, go to the bibmanager directory
+
+2. Call 
+
+```shell
+./insert_citekey_to_note_bib.py -c ./sample.ctl
+```
 
 ## Future implementation
 
@@ -127,7 +161,7 @@ tasks by flags (e.g., running the current functionality by
 `bibmanager.py --insert_citekey -c [control_file]`). 
 
 
-<!-- ## References -->
+<!-- ## Links -->
 
 [BibTex official]: http://www.bibtex.org/Format/ 
 
@@ -136,4 +170,10 @@ tasks by flags (e.g., running the current functionality by
 [PaperPile article]: https://www.bibtex.com/g/bibtex-format/ 
 
 [articles by PaperPile]: https://www.bibtex.com/format/
+
+[Zotero]: https://www.zotero.org/support/kb/importing_standardized_formats
+
+[PaperPile]: https://paperpile.com/h/import-ris-bibtex/
+
+[Mendeley]: https://www.mendeley.com/guides/desktop/02-adding-documents
 
