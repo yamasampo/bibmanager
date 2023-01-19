@@ -98,42 +98,22 @@ note = "221017_PaperPile_citekey: Talbert2022-wc",
 
 ### Input arguments
 
-- input file path (required)
-- ouptut file path (required)
-- prefix (optional)
-- suffix (optional)
+The letters following __-__ are flags corresponding to the arguments. 
 
-A user can pass these arguments via a control file, which should be 
-formatted like `sample.ctl`. 
+- input file path (required) __-i__
+- ouptut file path (required) __-o__
+- prefix (optional) __-p__
+- suffix (optional) __-s__
 
-Please pass the arguments to the script with corresponding flags (see 
-below). 
+A user can pass these arguments via a control file with __-c__ flag. 
 
-```
-usage: insert_citekey_to_note_bib.py [-h] [-i INPUT_FILE_PATH] [-o OUTPUT_FILE_PATH] [-p [PREFIX]] [-s [SUFFIX]] [-c [CONTROL_FILE_PATH]]
-
-Insert citekey into "note" field.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -i INPUT_FILE_PATH, --input_file_path INPUT_FILE_PATH
-                        A path to an input BibTex file.
-  -o OUTPUT_FILE_PATH, --output_file_path OUTPUT_FILE_PATH
-                        A path to an output file.
-  -p [PREFIX], --prefix [PREFIX]
-                        Prefix string in the inserted string in the note field.
-  -s [SUFFIX], --suffix [SUFFIX]
-                        Suffix string in the inserted string in the note field.
-  -c [CONTROL_FILE_PATH], --control_file_path [CONTROL_FILE_PATH]
-                        A path to an control file, where parameters are listed in the file. Note that other command-line arguments will be ignored if a control file
-                        is given.
-```
-
-You may not remember the flags and arguments. You can check this usage by 
+You may not remember the flags and arguments. You can show a usage message by 
 calling `./insert_citekey_to_note_bib.py -h` or 
 `./insert_citekey_to_note_bib.py --help`. 
 
 ### Example 1
+
+To run the script, 
 
 1. In Terminal, go to the bibmanager directory
 
