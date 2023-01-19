@@ -168,13 +168,21 @@ Please confirm that the output file is created and the content is the same as
 
 ## Future implementation
 
-- [ ] Retrieve information from different file format (e.g., JASON, RIS, CSV and so on) and add to BibTex
+The following tasks are the functionalities that will make this package more 
+useful. The last item is just for fun (probably there is a similar program 
+already). 
+
+- [ ] Retrieve information from different file format (e.g., JASON, RIS, CSV and 
+so on) and add to BibTex
 
 - [ ] Add task controller so that users do not have to look for a script that does 
 a job they want this package to do. Users just need to read this file and specify 
 tasks by flags (e.g., running the current functionality by 
 `bibmanager.py --insert_citekey -c [control_file]`). 
 
+- [ ] Extract keywords from abstracts of all the articles in a given BibTex file. 
+This function will require processes of 1) remove duplicated entries, 2) obtain 
+abstracts from all the articles, and 3) extract keywords. 
 
 <!-- ## Links -->
 
@@ -191,5 +199,4 @@ tasks by flags (e.g., running the current functionality by
 [PaperPile]: https://paperpile.com/h/import-ris-bibtex/
 
 [Mendeley]: https://www.mendeley.com/guides/desktop/02-adding-documents
-[def]: #how-to-use
 
