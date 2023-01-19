@@ -19,22 +19,13 @@ the future.
 
 ## Table of Contents
 
-1. [Input Arguments](#input-arguments)
-2. [About BibTex File Format](#about-bibtex-file-format)
-3. [How To Use](#how-to-use)
-4. [Future Implementation](#future-implementation)
+1. [What this script does](#what-this-script-does)
+2. [How to use](#how-to-use)
+3. [Future implementation](#future-implementation)
 
-## Input Arguments
+## What this script does
 
-- input file path (required)
-- ouptut file path (required)
-- prefix (optional)
-- suffix (optional)
-
-A user can pass these arguments via a control file, which should be ]
-formatted like `sample.ctl`. 
-
-## About BibTex file format
+### Input BibTex file
 
 In the BibTex file format, each entry is defined by @ and a curly bracket. 
 Here is an example, 
@@ -76,6 +67,8 @@ value. Field and value are separated by = sign.
 There are many other specifics in BibTex format and please refer to others' 
 explanations for details. I found [articles by PaperPile] very informative. 
 
+### Output BibTex file
+
 Below shows what you will find in an output file if you input the BibTex 
 sample above. Since the input does not have `note` field, it is created, and
 citekey "Talbert2022-wc" is added to the `note` field with prefix "221017_PaperPile_citekey: ". 
@@ -101,7 +94,20 @@ note = "221017_PaperPile_citekey: Talbert2022-wc",
 }
 ```
 
-## How To Use
+## How to use
+
+### Input arguments
+
+- input file path (required)
+- ouptut file path (required)
+- prefix (optional)
+- suffix (optional)
+
+A user can pass these arguments via a control file, which should be 
+formatted like `sample.ctl`. 
+
+Please pass the arguments to the script with corresponding flags (see 
+below). 
 
 ```
 usage: insert_citekey_to_note_bib.py [-h] [-i INPUT_FILE_PATH] [-o OUTPUT_FILE_PATH] [-p [PREFIX]] [-s [SUFFIX]] [-c [CONTROL_FILE_PATH]]
@@ -122,6 +128,10 @@ optional arguments:
                         A path to an control file, where parameters are listed in the file. Note that other command-line arguments will be ignored if a control file
                         is given.
 ```
+
+You may not remember the flags and arguments. You can check this usage by 
+calling `./insert_citekey_to_note_bib.py -h` or 
+`./insert_citekey_to_note_bib.py --help`. 
 
 ### Example 1
 
@@ -176,4 +186,5 @@ tasks by flags (e.g., running the current functionality by
 [PaperPile]: https://paperpile.com/h/import-ris-bibtex/
 
 [Mendeley]: https://www.mendeley.com/guides/desktop/02-adding-documents
+[def]: #how-to-use
 
