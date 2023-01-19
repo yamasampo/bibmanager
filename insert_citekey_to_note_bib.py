@@ -3,13 +3,10 @@
 """A Python script that retrieves identifiers of entries in a reference library, 
 which are called citekey, and inserts it into a field tractable across libraries. 
 
-Currently, this script accepts only a BibTex file format (ref. 1-3), but other 
-formats, such as CSV and JASON formats, may be supported in the future. 
-
-Please see details for README.md. 
+Please refer to README.md for detail. 
 """
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 __author__ = 'Haruka Yamashita'
 __email__ = 'haruka.yamashita.t@gmail.com'
 
@@ -31,6 +28,7 @@ BibTexEntry = namedtuple(
 def main(
         input_file_path:    str, 
         output_file_path:   str, 
+        insert_field:       str = 'note',
         prefix:             str = '', 
         suffix:             str = ''
         ) -> None:
@@ -54,12 +52,14 @@ def main(
         A path to the input BibTex file
     output_file_path: str
         A path to the output BibTex file
+    insert_field: str (optional: 'note' by default)
+        Field to which citekey is going to be inserted.
     prefix: str (optional: '' by default)
         A string that will be put just before citekey in note section. 
     suffix: str (optional: '' by default)
         A string that will be put just after citekey in note section.
     """
-    # Check if an output file is given properly
+    # Check if an output file is specified
     if output_file_path == '':
         raise ValueError('Please give output_file_path.')
     
@@ -67,13 +67,17 @@ def main(
     if os.path.isfile(output_file_path):
         raise FileExistsError(f'File exists: {output_file_path}')
 
+    # Check if field is specified. 
+    if insert_field == '':
+        msg = 'Please specify a field to insert citekey ("note" by default).'
+        raise ValueError(msg)
+
     # Read the input file content
     bibtex_entries: List[BibTexEntry] = read_BibTex_file(input_file_path)
     
     # Insert citekey in note field. 
-    # NOTE: Currently, the field to which citekey will be inserted is hard-coded 
-    # under this function, but I can make it accessible by users. 
-    new_bibtex_entries = insert_citekey_to_note(bibtex_entries, prefix, suffix)
+    new_bibtex_entries = insert_citekey_to_note(
+        bibtex_entries, insert_field, prefix, suffix)
 
     # Output as file
     save_as_BibTex_file(new_bibtex_entries, output_file_path)
@@ -94,9 +98,9 @@ def read_BibTex_file(file_path: str) -> List[BibTexEntry]:
     List[BibTexEntry]
     """
     # Get a list of strings, each of them represent one reference entry
-    contents: List[str]         = get_BibTex_file_contents(file_path)
+    contents: List[str] = get_BibTex_file_contents(file_path)
     # Initialize a list to output
-    entries: List[BibTexEntry]    = []
+    entries: List[BibTexEntry] = []
 
     # For each entry
     for entry_str in contents:
@@ -114,8 +118,9 @@ def read_BibTex_file(file_path: str) -> List[BibTexEntry]:
 
 def insert_citekey_to_note(
         bibtex_entries: List[BibTexEntry], 
-        prefix: str = '', 
-        suffix: str = ''
+        insert_field:   str = 'note',
+        prefix:         str = '', 
+        suffix:         str = ''
         ) -> List[BibTexEntry]:
     """Returns a list of BibTexEntry with citekey in 'note' field. If 'note' 
     field does not exist in the input data, note field will be created, 
@@ -134,7 +139,7 @@ def insert_citekey_to_note(
     new_bibtex_entries = []
 
     for entry in bibtex_entries:
-        out_entry = insert_citekey(entry, prefix, suffix)
+        out_entry = insert_citekey(entry, insert_field, prefix, suffix)
         new_bibtex_entries.append(out_entry)
 
     return new_bibtex_entries
@@ -286,16 +291,15 @@ def convert_str_to_BibTexEntry(entry: str) -> BibTexEntry:
     return BibTexEntry(citekey, entry_type, data)
 
 def insert_citekey(
-        entry: BibTexEntry, 
-        prefix: str = '', suffix: str = '') -> BibTexEntry:
+        entry:          BibTexEntry, 
+        insert_field:   str = 'note',
+        prefix:         str = '', 
+        suffix:         str = '') -> BibTexEntry:
     """Insert citekey (with prefix and suffix strings if specified) to note 
     field in a given BibTexEntry. If note field does not exist, this function 
     will make note field. The returned BibTexEntry object is the input one with 
     modification of its `data` dictionary. 
     """
-    # NOTE: Here is hard-coded. This can be a user-accessible argument so that
-    # users can specify the field to insert citekey. 
-    insert_field = 'note'
 
     # If field does not exist
     if insert_field not in entry.data:
@@ -414,6 +418,11 @@ if __name__ == '__main__':
         type=str
     )
     parser.add_argument(
+        "-f", "--field", 
+        help="Field to which citekey is going to be inserted.", 
+        type=str, nargs='?', default='note'
+    )
+    parser.add_argument(
         "-p", "--prefix", 
         help="Prefix string in the inserted string in the note field.", 
         type=str, nargs='?', default=''
@@ -439,6 +448,7 @@ if __name__ == '__main__':
         main(
             args.input_file_path, 
             args.output_file_path,
+            args.field,
             args.prefix,
             args.suffix
         )
